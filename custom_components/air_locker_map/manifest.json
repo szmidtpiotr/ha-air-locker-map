@@ -1,0 +1,12 @@
+{
+  "domain": "air_locker_map",
+  "name": "Air Locker Map",
+  "codeowners": ["@szmidtpiotr"],
+  "config_flow": true,
+  "documentation": "https://github.com/szmidtpiotr/ha-air-locker-map",
+  "integration_type": "service",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/szmidtpiotr/ha-air-locker-map/issues",
+  "requirements": [],
+  "version": "0.1.0"
+}

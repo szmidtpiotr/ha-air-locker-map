@@ -1,0 +1,99 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Air Locker Map",
+        "description": "Jakość powietrza z czujników w paczkomatach InPost. Klucz API wydaje administrator serwera (panel /admin → Klucze API).",
+        "data": {
+          "url": "Adres serwera",
+          "api_key": "Klucz API",
+          "mode": "Skąd brać odczyty"
+        },
+        "data_description": {
+          "url": "Publiczny adres albo lokalny, np. http://192.168.1.66:8080",
+          "mode": "„Najbliższy do domu” używa lokalizacji ustawionej w Home Assistant."
+        }
+      },
+      "code": {
+        "title": "Kod paczkomatu",
+        "description": "Np. KAP01M albo WAW84A. W trybie „przy paczkomacie” może to być paczkomat bez czujnika — weźmiemy najbliższy działający.",
+        "data": {
+          "code": "Kod"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Nowy klucz API",
+        "description": "Serwer odrzucił klucz (mógł zostać unieważniony). Wklej nowy.",
+        "data": {
+          "api_key": "Klucz API"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Klucz API odrzucony (zły albo unieważniony).",
+      "not_found": "Nie ma takiego paczkomatu albo w pobliżu nie ma działających czujników.",
+      "cannot_connect": "Nie można połączyć się z serwerem."
+    },
+    "abort": {
+      "already_configured": "To źródło jest już skonfigurowane.",
+      "reauth_successful": "Klucz zaktualizowany."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opcje",
+        "data": {
+          "scan_minutes": "Odpytywanie co (minut)",
+          "include_suspect": "Dopuszczaj podejrzane czujniki"
+        },
+        "data_description": {
+          "scan_minutes": "Serwer odświeża dane mniej więcej co godzinę — częściej niż co 10–15 min nie ma sensu.",
+          "include_suspect": "Domyślnie w trybach „najbliższy” zepsute czujniki są pomijane."
+        }
+      }
+    }
+  },
+  "selector": {
+    "mode": {
+      "options": {
+        "home": "Najbliższy czujnik do domu",
+        "locker": "Najbliższy czujnik do wskazanego paczkomatu",
+        "sensor": "Konkretny czujnik (bez zastępowania)"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "pm4": {
+        "name": "PM4"
+      },
+      "pressure_sl": {
+        "name": "Ciśnienie (n.p.m.)"
+      },
+      "pressure_raw": {
+        "name": "Ciśnienie na miejscu"
+      },
+      "humidity_case": {
+        "name": "Wilgotność (obudowa)"
+      },
+      "temperature_case": {
+        "name": "Temperatura (obudowa)"
+      },
+      "distance": {
+        "name": "Odległość do czujnika"
+      },
+      "updated": {
+        "name": "Ostatni odczyt"
+      },
+      "source": {
+        "name": "Paczkomat z czujnikiem"
+      }
+    },
+    "binary_sensor": {
+      "suspect": {
+        "name": "Podejrzany odczyt"
+      }
+    }
+  }
+}
