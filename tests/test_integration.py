@@ -80,3 +80,31 @@ async def test_revoked_key_starts_reauth(hass: HomeAssistant, aioclient_mock: Ai
     await hass.async_block_till_done()
     flows = hass.config_entries.flow.async_progress()
     assert any(f["context"]["source"] == "reauth" for f in flows)
+
+
+async def test_smog_sensor_hysteresis(hass: HomeAssistant, aioclient_mock: AiohttpClientMocker) -> None:
+    """Przekroczenie normy: włącza się powyżej progu, nie gaśnie przy 30 (>28), gaśnie poniżej 28."""
+    from datetime import timedelta
+
+    from homeassistant.util import dt as dt_util
+    from pytest_homeassistant_custom_component.common import async_fire_time_changed
+
+    def reading(pm25):
+        return {"sensors": [{**SENSOR, "measurements": {**SENSOR["measurements"], "pm25": pm25}}]}
+
+    aioclient_mock.get(NEAREST, json=reading(40))
+    entry = MockConfigEntry(domain=DOMAIN, title="Powietrze — dom", unique_id="home",
+                            data={CONF_URL: URL, CONF_API_KEY: KEY, CONF_MODE: "home"}, options={"threshold": 35})
+    entry.add_to_hass(hass)
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    eid = "binary_sensor.powietrze_dom_threshold_exceeded"
+    assert hass.states.get(eid).state == "on"
+
+    for value, expected in ((30, "on"), (27, "off"), (34, "off")):
+        aioclient_mock.clear_requests()
+        aioclient_mock.get(NEAREST, json=reading(value))
+        async_fire_time_changed(hass, dt_util.utcnow() + timedelta(minutes=16 * (value + 1)))
+        await hass.async_block_till_done()
+        assert hass.states.get(eid).state == expected, value
+    assert hass.states.get(eid).attributes["off_below"] == 28.0

@@ -45,11 +45,13 @@
         "title": "Opcje",
         "data": {
           "scan_minutes": "Odpytywanie co (minut)",
-          "include_suspect": "Dopuszczaj podejrzane czujniki"
+          "include_suspect": "Dopuszczaj podejrzane czujniki",
+          "threshold": "Próg alarmu PM2.5 (µg/m³)"
         },
         "data_description": {
           "scan_minutes": "Serwer odświeża dane mniej więcej co godzinę — częściej niż co 10–15 min nie ma sensu.",
-          "include_suspect": "Domyślnie w trybach „najbliższy” zepsute czujniki są pomijane."
+          "include_suspect": "Domyślnie w trybach „najbliższy” zepsute czujniki są pomijane.",
+          "threshold": "Czujnik „Przekroczenie normy” włącza się powyżej progu i wyłącza poniżej 80% progu."
         }
       }
     }
@@ -60,6 +62,14 @@
         "home": "Najbliższy czujnik do domu",
         "locker": "Najbliższy czujnik do wskazanego paczkomatu",
         "sensor": "Konkretny czujnik (bez zastępowania)"
+      }
+    },
+    "threshold": {
+      "options": {
+        "13": "13 — bardzo dobry → dobry",
+        "35": "35 — dobry → umiarkowany",
+        "55": "55 — umiarkowany → dostateczny",
+        "75": "75 — dostateczny → zły"
       }
     }
   },
@@ -93,6 +103,9 @@
     "binary_sensor": {
       "suspect": {
         "name": "Podejrzany odczyt"
+      },
+      "smog": {
+        "name": "Przekroczenie normy"
       }
     }
   }

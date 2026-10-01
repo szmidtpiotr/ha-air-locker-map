@@ -1,0 +1,86 @@
+blueprint:
+  name: Alert smogowy (Air Locker Map)
+  description: >-
+    Powiadomienie na telefon, gdy czujnik „Przekroczenie normy” z integracji Air Locker Map się włączy
+    (i gdy powietrze się poprawi). Opcjonalnie dodatkowe akcje — np. włącz oczyszczacz, zamknij okna,
+    wyłącz rekuperację.
+  domain: automation
+  source_url: https://github.com/szmidtpiotr/ha-air-locker-map/blob/develop/blueprints/automation/air_locker_map/smog_alert.yaml
+  input:
+    smog_sensor:
+      name: Czujnik „Przekroczenie normy”
+      selector:
+        entity:
+          filter:
+            - integration: air_locker_map
+              domain: binary_sensor
+    notify_device:
+      name: Telefon do powiadomień
+      description: Urządzenie z aplikacją Home Assistant.
+      default: ""
+      selector:
+        device:
+          filter:
+            - integration: mobile_app
+    notify_on_clear:
+      name: Powiadamiaj też o poprawie
+      default: true
+      selector:
+        boolean:
+    smog_actions:
+      name: Akcje przy smogu
+      default: []
+      selector:
+        action:
+    clear_actions:
+      name: Akcje po poprawie
+      default: []
+      selector:
+        action:
+
+mode: queued
+
+trigger:
+  - platform: state
+    entity_id: !input smog_sensor
+    from: "off"
+    to: "on"
+    id: smog
+  - platform: state
+    entity_id: !input smog_sensor
+    from: "on"
+    to: "off"
+    id: clear
+
+variables:
+  smog_sensor: !input smog_sensor
+  notify_device: !input notify_device
+  notify_on_clear: !input notify_on_clear
+  pm25: "{{ state_attr(smog_sensor, 'pm25') }}"
+  source: "{{ state_attr(smog_sensor, 'source') }}"
+  threshold: "{{ state_attr(smog_sensor, 'threshold') }}"
+
+action:
+  - choose:
+      - conditions: "{{ trigger.id == 'smog' }}"
+        sequence:
+          - if: "{{ notify_device != '' }}"
+            then:
+              - domain: mobile_app
+                type: notify
+                device_id: !input notify_device
+                title: "Smog w okolicy"
+                message: "PM2.5 {{ pm25 | round(0) }} µg/m³ (próg {{ threshold | round(0) }}) — czujnik {{ source }}."
+          - choose: []
+            default: !input smog_actions
+      - conditions: "{{ trigger.id == 'clear' }}"
+        sequence:
+          - if: "{{ notify_device != '' and notify_on_clear }}"
+            then:
+              - domain: mobile_app
+                type: notify
+                device_id: !input notify_device
+                title: "Powietrze się poprawiło"
+                message: "PM2.5 {{ pm25 | round(0) }} µg/m³ — czujnik {{ source }}."
+          - choose: []
+            default: !input clear_actions

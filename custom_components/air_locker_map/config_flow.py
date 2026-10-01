@@ -21,6 +21,9 @@ from homeassistant.helpers.selector import (
 
 from .api import AirLockerMapApi, AirLockerMapError, AuthError, NotFoundError
 from .const import (
+    CONF_THRESHOLD,
+    DEFAULT_THRESHOLD,
+    THRESHOLD_OPTIONS,
     CONF_CODE,
     CONF_INCLUDE_SUSPECT,
     CONF_MODE,
@@ -151,6 +154,8 @@ class AirLockerMapOptionsFlow(OptionsFlow):
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         if user_input is not None:
+            if CONF_THRESHOLD in user_input:
+                user_input[CONF_THRESHOLD] = int(user_input[CONF_THRESHOLD])
             return self.async_create_entry(data=user_input)
         opts = self.config_entry.options
         return self.async_show_form(
@@ -163,6 +168,15 @@ class AirLockerMapOptionsFlow(OptionsFlow):
                     vol.Required(
                         CONF_INCLUDE_SUSPECT, default=opts.get(CONF_INCLUDE_SUSPECT, False)
                     ): bool,
+                    vol.Required(
+                        CONF_THRESHOLD, default=str(opts.get(CONF_THRESHOLD, DEFAULT_THRESHOLD))
+                    ): SelectSelector(
+                        SelectSelectorConfig(
+                            options=[str(t) for t in THRESHOLD_OPTIONS],
+                            mode=SelectSelectorMode.DROPDOWN,
+                            translation_key="threshold",
+                        )
+                    ),
                 }
             ),
         )

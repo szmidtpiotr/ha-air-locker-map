@@ -36,6 +36,19 @@ Każdy wpis to osobne urządzenie, więc możesz mieć np. dom i działkę.
   odstający od sąsiadów).
 - **Odległość do czujnika**, **ostatni odczyt** — diagnostyczne.
 
+- **Przekroczenie normy** — włącza się, gdy PM2.5 przekroczy próg z opcji (13, 35, 55 albo 75 µg/m³; domyślnie 35),
+  wyłącza poniżej 80% progu (histereza, żeby nie migało przy wartościach na granicy). Zepsute odczyty są ignorowane.
+
+## Alert smogowy — blueprint
+
+Gotowa automatyzacja: powiadomienie na telefon przy smogu i po poprawie, plus dowolne akcje
+(włącz oczyszczacz, zamknij okna, wyłącz rekuperację).
+
+[![Importuj blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2Fszmidtpiotr%2Fha-air-locker-map%2Fblob%2Fdevelop%2Fblueprints%2Fautomation%2Fair_locker_map%2Fsmog_alert.yaml)
+
+Albo ręcznie: Ustawienia → Automatyzacje → Blueprinty → Importuj → adres pliku
+`blueprints/automation/air_locker_map/smog_alert.yaml` z tego repo.
+
 Opcje: częstotliwość odpytywania (domyślnie 15 min; serwer odświeża dane mniej więcej co godzinę)
 i dopuszczanie podejrzanych czujników.
 

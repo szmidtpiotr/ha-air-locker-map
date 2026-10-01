@@ -16,3 +16,8 @@ MODE_SENSOR = "sensor"    # konkretny czujnik, bez zastępowania
 
 DEFAULT_SCAN_MINUTES = 15
 MIN_SCAN_MINUTES = 10
+
+CONF_THRESHOLD = "threshold"   # próg PM2.5 dla czujnika „Przekroczenie normy”
+DEFAULT_THRESHOLD = 35          # granica dobry → umiarkowany (indeks GIOŚ)
+THRESHOLD_OPTIONS = [13, 35, 55, 75]
+RESOLVE_RATIO = 0.8             # wyłączenie poniżej 80% progu — histereza jak na serwerze
